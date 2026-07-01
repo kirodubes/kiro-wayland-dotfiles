@@ -3,6 +3,20 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.07.01
+
+### What Changed
+- **`kiro-ohmyniri` is now a consumer** (mako + waybar colours/stylesheet only, not
+  hyprlock/hypridle — that edition locks/idles with gtklock/swayidle instead). It had briefly
+  shipped its own copies of `mako/config` + `waybar/colors.css`/`style.css` at the same absolute
+  paths — a real file-ownership conflict against any other consumer of this package installed
+  alongside — corrected same-day. niri's native `niri/workspaces` waybar module renders to
+  `#workspaces`, so the existing sway/hyprland selector block in `style.css` already covers it;
+  no dedicated niri block was needed.
+
+### Files Modified
+- `CLAUDE.md` (consumer list, niri caveat)
+
 ## 2026.06.30
 
 ### What Changed
