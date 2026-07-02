@@ -2,15 +2,23 @@
 
 ## Overview
 The **shared config base** for the KIROTUX Wayland line. Owns the dotfiles common to the
-waybar+mako editions (hyprland · wayfire · sway · river · labwc · dwl · **ohmyniri**) so they
-don't each ship — and conflict on — the same files. Public, shipped via `nemesis_repo`. This is
-the "shared Kiro Wayland shell" base the per-WM studies kept flagging; the
-kiro-hyprland↔kiro-river install conflict was the forcing function. `kiro-ohmyniri` is a partial
-consumer despite niri being Smithay-based, not wlroots — mako/waybar work over the generic
-wlr-layer-shell protocol niri also implements, so only the lock/idle half (hyprlock/hypridle,
-wlroots-specific in practice) doesn't apply to it.
+waybar+mako editions (hyprland · wayfire · sway · river · labwc · dwl · **ohmyniri**), plus the
+`/etc/dconf` GTK defaults common to **all 9 editions including `kiro-niri`**, so they don't each
+ship — and conflict on — the same files. Public, shipped via `nemesis_repo`. This is the "shared
+Kiro Wayland shell" base the per-WM studies kept flagging; the kiro-hyprland↔kiro-river install
+conflict was the forcing function (dconf hit the identical conflict later, 2026-07-02).
+`kiro-ohmyniri` is a partial consumer despite niri being Smithay-based, not wlroots — mako/waybar
+work over the generic wlr-layer-shell protocol niri also implements, so only the lock/idle half
+(hyprlock/hypridle, wlroots-specific in practice) doesn't apply to it. `kiro-niri` is a partial
+consumer too, for dconf only.
 
 ## What it owns (and why)
+- `/etc/dconf/profile/user` + `/etc/dconf/db/local.d/00-kiro.conf` — system-wide GTK appearance
+  defaults (dark adw-gtk3, Surfn icons, Bibata-Modern-Ice cursor). Consumed by **all 9 editions,
+  including `kiro-niri`** — these settings are identical everywhere regardless of shell, so this
+  is the one file every edition shares with no exceptions. Moved here 2026-07-02 after the same
+  file-conflict pattern that created this package in the first place (co-installing two editions
+  both shipping `/etc/dconf/...` broke pacman).
 - `~/.config/mako/config` — notifications (all waybar+mako editions, incl. `kiro-ohmyniri`; NOT
   `kiro-niri`, which uses noctalia instead).
 - `~/.config/hypr/hyprlock.conf` + `hypridle.conf` — the Wayland lock/idle pipeline (NOT consumed
@@ -30,8 +38,9 @@ wlroots-specific in practice) doesn't apply to it.
 - Each waybar edition: `depends=('kiro-wayland-dotfiles')`, drops the shared files, ships only its
   `waybar/config-<wm>.jsonc` (unique path → no collision), and launches
   `waybar -c ~/.config/waybar/config-<wm>.jsonc`.
-- **`kiro-niri` (noctalia shell) is NOT a consumer** — no waybar/mako/hypr at all. Its sibling
-  **`kiro-ohmyniri` IS a consumer** (mako + waybar css only; not hyprlock/hypridle).
+- **`kiro-niri` (noctalia shell) is a partial consumer** — dconf only, no waybar/mako/hypr (those
+  stay noctalia's job). Its sibling **`kiro-ohmyniri` is also a partial consumer** (dconf + mako +
+  waybar css; not hyprlock/hypridle).
 
 ## Gotchas
 - The combined `style.css` must keep ALL editions' workspace selectors. When a new waybar edition is

@@ -3,6 +3,28 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.07.02
+
+### What Changed
+- **Now owns the shared `/etc/dconf` GTK appearance defaults** (`profile/user` +
+  `db/local.d/00-kiro.conf`) — the same file-conflict pattern that created this package hit again:
+  all 9 editions had independently shipped byte-identical (or near-identical) copies of these two
+  files, which pacman refuses to install twice when two editions are co-installed on one machine.
+  Moved here once; **all 9 editions, including `kiro-niri`**, now consume it for dconf (niri and
+  ohmyniri were previously non-consumers/partial-consumers of the mako/hypr/waybar files — dconf
+  makes both full dconf-consumers regardless).
+
+### Technical Details
+- Settings (`color-scheme`, `gtk-theme`, `icon-theme`, `cursor-theme`, `cursor-size`) were
+  identical across all 9 source repos already — only the comment header differed per edition, so
+  the merge is lossless.
+- `kiro-niri` had no prior dependency on this package (noctalia owns everything else); it gains
+  `kiro-wayland-dotfiles` in `depends=()` for dconf only.
+
+### Files Modified
+- `etc/dconf/profile/user`, `etc/dconf/db/local.d/00-kiro.conf` (new)
+- `CLAUDE.md` (ownership list, architecture section, overview)
+
 ## 2026.07.01
 
 ### What Changed
