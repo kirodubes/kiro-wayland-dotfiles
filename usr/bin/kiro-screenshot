@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#####################################################################
+# Author    : Erik Dubois
+# Website   : https://kiroproject.be
+#####################################################################
+#   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
+#
+# Purpose:
+#   Take a screenshot on any Kiro Wayland edition and actually leave
+#   something behind: a timestamped PNG in ~/Pictures/Screenshots, the image
+#   on the clipboard, and a notification showing where it landed.
+#   "region" (default) drags a rectangle, "screen" grabs the whole output.
+# Why:
+#   Every non-niri Kiro Wayland edition bound Print to
+#   `grim -g "$(slurp)" - | wl-copy`. That worked, but wrote no file and gave
+#   no feedback, so Print looked like a dead key next to chadwm's scrot bind.
+#   The same broken line had been copy-pasted into twelve editions, so the
+#   logic now lives here once, in kiro-wayland-dotfiles, which every Wayland
+#   edition already depends on -- one place to fix it next time.
+#####################################################################
+
+set -euo pipefail
+
+mode="${1:-region}"
+
+shotdir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$shotdir"
+shot="$shotdir/$(date +%Y-%m-%d_%H-%M-%S).png"
+
+# DankMaterialShell hides its popouts while this is set, so a half-faded panel
+# does not end up in the shot. It is a handshake, not a screenshot tool -- it
+# captures nothing itself. On the editions that don't run DMS the binary is
+# absent and both calls are a no-op, which is why this needs no per-edition
+# branching. Noctalia exposes no equivalent, so it simply gets a plain grab.
+dms_screenshot_mode() {
+    command -v dms >/dev/null 2>&1 || return 0
+    dms ipc call screenshot "$1" >/dev/null 2>&1 || true
+}
+
+dms_screenshot_mode begin
+trap 'dms_screenshot_mode end' EXIT
+
+case "$mode" in
+    region)
+        # slurp exits non-zero when the selection is cancelled (Esc / right-click)
+        geometry=$(slurp) || exit 0
+        grim -g "$geometry" "$shot"
+        ;;
+    screen)
+        grim "$shot"
+        ;;
+    *)
+        echo "usage: $(basename "$0") [region|screen]" >&2
+        exit 1
+        ;;
+esac
+
+# Close the handshake before notifying: while it is open the suppressed popout
+# layer swallows the very toast this whole helper exists to show.
+dms_screenshot_mode end
+
+wl-copy < "$shot"
+
+notify-send -a Screenshot -i "$shot" "Screenshot saved" "$shot" || true
