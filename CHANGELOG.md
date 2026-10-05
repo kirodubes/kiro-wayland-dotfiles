@@ -6,21 +6,12 @@ Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 ## 2026.10.05
 
 ### What Changed
-- **Folders open in Thunar on the Hyprland editions.** With no default set, opening a folder (from a browser's
-  download list, a "Show in folder" button, …) started Disk Usage Analyzer: baobab is on the ISOs and declares
-  `inode/directory` too, and it comes first alphabetically. New `/etc/xdg/hyprland-mimeapps.list` makes Thunar the
-  default for `inode/directory`.
-
-### Technical Details
-- Desktop-specific list (freedesktop mime-apps spec: `$desktop-mimeapps.list`, read only when
-  `XDG_CURRENT_DESKTOP=Hyprland`), so the other Wayland editions are unaffected and the four Hyprland edition packages
-  can't clash over one file. A user's `~/.config/mimeapps.list` still wins (Kirotux Hyprland Premium's Default apps
-  writes there). `package()` already copies all of `etc/`.
-- Tested on the QEMU kiro-hyprland-dms install: `xdg-mime query default inode/directory` and `gio mime` went from
-  `org.gnome.baobab.desktop` to `thunar.desktop`; with `XDG_CURRENT_DESKTOP=sway` nothing changed.
+- Folders open in Thunar: tried here first as `/etc/xdg/hyprland-mimeapps.list` (Hyprland only), then moved the
+  same day to **kiro-system-files** as `/usr/share/applications/mimeapps.list`, so every Kiro and KIROTUX desktop,
+  X11 and Wayland, gets it. The file is removed from this package again; nothing else changes here.
 
 ### Files Modified
-- `etc/xdg/hyprland-mimeapps.list` (new)
+- `etc/xdg/hyprland-mimeapps.list` (added, then removed)
 
 ## 2026.09.05
 
