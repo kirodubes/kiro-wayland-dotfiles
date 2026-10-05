@@ -1,0 +1,6 @@
+# Kiro Hyprland editions: folders open in Thunar.
+# Without a default, Disk Usage Analyzer (baobab, also on the ISO) won: it comes first alphabetically
+# among the apps that declare inode/directory. Read only in Hyprland sessions (XDG_CURRENT_DESKTOP=Hyprland);
+# a user's own ~/.config/mimeapps.list (e.g. set by Kirotux Hyprland Premium's Default apps) still wins.
+[Default Applications]
+inode/directory=thunar.desktop
