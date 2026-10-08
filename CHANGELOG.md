@@ -12,6 +12,13 @@ Format: one dated entry per day (`YYYY.MM.DD`), newest first.
   kvantum package and close to adw-gtk3-dark — whenever the config is missing, empty or names a theme that isn't
   installed. A theme the user picked is left alone.
 
+- **Apps run as root are dark too.** gparted and Thunar opened through pkexec showed light Adwaita: pkexec drops
+  `WAYLAND_DISPLAY`, so they run on XWayland, where GTK3 ignores dconf and reads `settings.ini` — and the only one
+  was gtk3's own `/usr/share` copy naming Adwaita. New `/etc/xdg/gtk-3.0/settings.ini` sets adw-gtk3-dark, dark
+  preference, Surfn, Bibata-Modern-Ice and Adwaita Sans 11.
+- **galculator's display is dark.** Its own default display is white with black digits; a skel config sets a
+  #1d1d20 background (the GTK view colour) with light text.
+
 ### Technical Details
 - Kvantum reads its theme only from `$XDG_CONFIG_HOME/Kvantum/kvantum.kvconfig` (no `/etc/xdg` lookup), so the
   default can't be a system file. Shipping it in `/etc/skel` would collide with kiro-kvantum and, with a
@@ -23,8 +30,18 @@ Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 - The recipe installs the script explicitly (`usr/bin` files are listed one by one). The KIROTUX ISO lists drop
   kiro-kvantum. kiro-hyprland-dms calls the helper at start; other Wayland editions add the same one line.
 
+- GTK3 reads `/etc/xdg/gtk-3.0/settings.ini` after `/usr/share/gtk-3.0/settings.ini` and before the user's
+  `~/.config` file, so it only fills in where nothing else is set. No package owns the path on X11 Kiro or Wayland,
+  and X11 users and root already have their own `~/.config` file from kiro-dot-files, so nothing changes there.
+  Found by testing 24 apps on an installed hyprland-dms system in QEMU (20 as the user, 4 as root); root gparted
+  then measured #1D1D20 like the user's GTK apps. ATT and Timeshift set their own theme and were already dark.
+- galculator config: the full generated file with only the five `display_*_color` keys changed. Wayland skel only —
+  a second copy in kiro-dot-files would give pacman a file conflict when ATT installs a Wayland desktop on X11 Kiro.
+
 ### Files Modified
 - usr/bin/kiro-kvantum-default (new)
+- etc/xdg/gtk-3.0/settings.ini (new)
+- etc/skel/.config/galculator/galculator.conf (new)
 
 ## 2026.10.05
 
