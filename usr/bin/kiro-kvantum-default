@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+#####################################################################
+# Author    : Erik Dubois
+# Website   : https://kiroproject.be
+#####################################################################
+#   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
+#
+# Purpose:
+#   Give Qt apps on a Kiro Wayland edition a Kvantum theme that matches the
+#   GTK side (adw-gtk3-dark): writes KvGnomeDark (or the theme given as $1)
+#   into ~/.config/Kvantum/kvantum.kvconfig -- but only when that file is
+#   missing, empty, or names a theme that is not installed. A theme the user
+#   picked (and that exists) is never touched. Run at session start.
+# Why:
+#   Kvantum reads its theme only from ~/.config, never from /etc/xdg, so the
+#   default cannot be a system file. Shipping it in /etc/skel would clash with
+#   kiro-kvantum (the X11 ArcDark config) and break installs that pull both in.
+#   The Wayland ISOs don't carry ArcDark, so without this every Qt app fell back
+#   to Kvantum's built-in theme.
+#####################################################################
+
+set -euo pipefail
+
+theme="${1:-KvGnomeDark}"
+kv_dir="${XDG_CONFIG_HOME:-$HOME/.config}/Kvantum"
+conf="$kv_dir/kvantum.kvconfig"
+
+installed() {
+    # "Default"/"Kvantum" are Kvantum's built-in theme: a deliberate choice, not a missing one.
+    [[ "$1" == "Default" || "$1" == "Kvantum" ]] && return 0
+    [[ -n "$1" && ( -d "/usr/share/Kvantum/$1" || -d "$kv_dir/$1" ) ]]
+}
+
+current=""
+[[ -f "$conf" ]] && current="$(sed -n 's/^theme=//p' "$conf" | head -n1)"
+
+installed "$current" && exit 0
+installed "$theme" || exit 0
+
+mkdir -p "$kv_dir"
+if [[ -s "$conf" ]] && grep -q '^theme=' "$conf"; then
+    sed -i "s/^theme=.*/theme=$theme/" "$conf"
+elif [[ -s "$conf" ]] && grep -q '^\[General\]' "$conf"; then
+    sed -i "/^\[General\]/a theme=$theme" "$conf"
+else
+    printf '[General]\ntheme=%s\n' "$theme" > "$conf"
+fi

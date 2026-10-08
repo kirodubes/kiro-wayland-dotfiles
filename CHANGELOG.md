@@ -3,6 +3,29 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.10.08
+
+### What Changed
+- **Qt apps match the dark GTK look on the Wayland editions.** The skel Kvantum config came from kiro-kvantum and
+  named ArcDark, a theme the Wayland ISOs don't install, so every Qt app (VLC, Kvantum Manager, …) fell back to
+  Kvantum's built-in theme. New `kiro-kvantum-default`, run at session start, sets KvGnomeDark — shipped with the
+  kvantum package and close to adw-gtk3-dark — whenever the config is missing, empty or names a theme that isn't
+  installed. A theme the user picked is left alone.
+
+### Technical Details
+- Kvantum reads its theme only from `$XDG_CONFIG_HOME/Kvantum/kvantum.kvconfig` (no `/etc/xdg` lookup), so the
+  default can't be a system file. Shipping it in `/etc/skel` would collide with kiro-kvantum and, with a
+  `conflicts=`, would break ISO builds and the Wayland desktop installs ATT does on X11 Kiro (every Wayland edition
+  depends on this package). A helper that only writes the user's own file has no package overlap.
+- `Default`/`Kvantum` (the built-in theme) count as a deliberate choice. Tested on six cases (missing, empty,
+  missing theme, installed theme, `[General]` without `theme=`, built-in) and on the hyprland-dms live ISO in
+  QEMU: shipped ArcDark → KvGnomeDark; Kvantum Manager and VLC then match pavucontrol.
+- The recipe installs the script explicitly (`usr/bin` files are listed one by one). The KIROTUX ISO lists drop
+  kiro-kvantum. kiro-hyprland-dms calls the helper at start; other Wayland editions add the same one line.
+
+### Files Modified
+- usr/bin/kiro-kvantum-default (new)
+
 ## 2026.10.05
 
 ### What Changed
