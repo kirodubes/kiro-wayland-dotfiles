@@ -49,5 +49,5 @@ consumer too, for dconf only.
   via their own `set-theme.sh` — that's the user's copy, not this read-only golden one.
 
 ## Build / delivery
-- Public recipe `../KIROTUX-PKG-BUILD/kiro-wayland-dotfiles/build.sh` → `~/EDU/nemesis_repo/`.
-  Rebuild this **and** every consuming edition when a shared file changes. See [../CLAUDE.md](../CLAUDE.md).
+- Public recipe `~/KIRO-PKG-BUILD-APPS/kiro-wayland-dotfiles/build.sh` → `~/EDU/nemesis_repo/`.
+  Rebuild this **and** every consuming edition when a shared file changes. See [KIROTUX/CLAUDE.md](../../KIROTUX/CLAUDE.md).
