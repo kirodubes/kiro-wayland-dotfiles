@@ -21,6 +21,14 @@
 
 set -euo pipefail
 
+# Domain kiro-wayland-dotfiles, catalogs in /usr/share/locale; English is the fallback.
+export TEXTDOMAIN=kiro-wayland-dotfiles
+if command -v gettext &>/dev/null; then
+    _t() { gettext "$1"; }
+else
+    _t() { printf '%s' "$1"; }
+fi
+
 mode="${1:-region}"
 
 shotdir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
@@ -61,4 +69,4 @@ dms_screenshot_mode end
 
 wl-copy < "$shot"
 
-notify-send -a Screenshot -i "$shot" "Screenshot saved" "$shot" || true
+notify-send -a Screenshot -i "$shot" "$(_t "Screenshot saved")" "$shot" || true

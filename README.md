@@ -20,6 +20,12 @@ owns those shared files once; each edition `depends` on it, so the editions are 
   selector (`#workspaces` / `#tags` / `#taskbar`); each edition launches
   `waybar -c ~/.config/waybar/config-<wm>.jsonc`, which picks up this style.
 
+## Languages
+
+The notifications of `kiro-screenshot` and `kiro-premium-hint` follow the system language: Dutch, German, Spanish, French, Portuguese (Brazil), Russian, Hungarian, Italian, Turkish, Polish, Japanese,
+Chinese (simplified) and Romanian, with English as the fallback. The translations live in `po/` (gettext); after changing the
+text run `bash po/make-mo.sh`.
+
 ## How to install
 
 Pulled in automatically as a dependency of any `kiro-<wayland-edition>` package. It depends on

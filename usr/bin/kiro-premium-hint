@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#####################################################################
+# Author    : Erik Dubois
+# Website   : https://kiroproject.be
+#####################################################################
+#   DO NOT JUST RUN THIS. EXAMINE AND JUDGE. RUN AT YOUR OWN RISK.
+#
+# Purpose:
+#   Ctrl+Alt+H on a KiroTux Wayland edition: open the edition's premium
+#   app when it is installed, otherwise show a notification about it with
+#   a "Get KiroTux" button that opens the KiroTux page.
+#   Usage: kiro-premium-hint hyprland|niri|wayfire
+# Why:
+#   The same English notify-send line was copy-pasted into eight edition
+#   configs (Lua, KDL and a wayfire script), so it could not be translated.
+#   It now lives here once, in kiro-wayland-dotfiles, which every Wayland
+#   edition depends on, and its text goes through gettext.
+#####################################################################
+
+set -euo pipefail
+
+# Domain kiro-wayland-dotfiles, catalogs in /usr/share/locale; English is the fallback.
+export TEXTDOMAIN=kiro-wayland-dotfiles
+if command -v gettext &>/dev/null && command -v gettext.sh &>/dev/null; then
+    _t() { gettext "$1"; }
+    # shellcheck source=/dev/null
+    . gettext.sh
+    _tf() { eval_gettext "$1"; }
+else
+    _t() { printf '%s' "$1"; }
+    _tf() { local _s="$1"; eval "printf '%s' \"${_s//\"/\\\"}\""; }
+fi
+
+case "${1:-}" in
+    hyprland) app=kirotux-hyprland-premium; product="Kirotux Hyprland Premium" ;;
+    niri)     app=kirotux-niri-premium;     product="Kirotux Niri Premium" ;;
+    wayfire)  app=kirotux-wayfire-premium;  product="Kirotux Wayfire Premium" ;;
+    *)
+        echo "usage: $(basename "$0") hyprland|niri|wayfire" >&2
+        exit 1
+        ;;
+esac
+
+if command -v "$app" >/dev/null 2>&1; then
+    exec "$app"
+fi
+
+button="$(_t 'Get KiroTux')"
+# TRANSLATORS: $product is the app's name (e.g. "Kirotux Hyprland Premium"); keep it as is.
+title="$(_tf 'Get $product')"
+body="$(_t 'Theme, window look, wallpaper and keyboard in one app. Comes with the KIROTUX ISOs.')"
+answer=$(notify-send -a Kirotux -i preferences-desktop-theme -A get="$button" "$title" "$body" || true)
+[ "$answer" = "get" ] && exec xdg-open https://kiroproject.be/kirotux.html
+exit 0

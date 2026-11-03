@@ -3,6 +3,32 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.11.03
+
+### What Changed
+- **New `kiro-premium-hint`**: Ctrl+Alt+H on a KiroTux edition opens the edition's premium app when it is
+  installed, otherwise it shows a notification about it with a "Get KiroTux" button that opens the KiroTux page.
+  The same English notify-send line used to be copy-pasted into eight edition configs; it lives here once now.
+- **The notifications speak 13 languages**: Dutch, German, Spanish, French, Portuguese (Brazil), Russian, Hungarian, Italian, Turkish, Polish, Japanese, Chinese (simplified) and Romanian. That is the premium notification and kiro-screenshot's
+  "Screenshot saved". They follow the system language; English stays the fallback.
+
+### Technical Details
+- gettext domain `kiro-wayland-dotfiles`; `.mo` files in `usr/share/locale/<lang>/LC_MESSAGES/`, installed to
+  `/usr/share/locale` (gettext's default, so the scripts set no `TEXTDOMAINDIR`). `po/make-mo.sh` extracts from
+  both helpers, merges the 13 `po/<lang>.po` and compiles. Same `_t`/`_tf` pattern as the ohmychadwm menu.
+- `kiro-premium-hint hyprland|niri|wayfire` maps the edition to its app and product name; the product name is a
+  `$product` placeholder that is never translated. The body reuses the premium apps' own page names
+  (Theme, Windows, Wallpaper, Keyboard) in every language.
+- Like kiro-screenshot it runs from a window-manager key, so it keeps the lean header (banner, `set -euo pipefail`)
+  without colors, ERR trap or `main()`; both are now listed in Kiro-HQ `TEMPLATE_EXCLUSIONS.md`.
+- `msgfmt --check` and `pofilter` clean; a separate Claude review pass took one fix (Turkish button
+  "KiroTux: şimdi edinin", so the name takes no suffix). Tested with a stub notify-send in 9 languages.
+
+### Files Modified
+- usr/bin/kiro-premium-hint (new), usr/bin/kiro-screenshot
+- usr/share/locale/ (new, 13 `.mo`), po/ (new: make-mo.sh, kiro-wayland-dotfiles.pot, LINGUAS, 13 `.po`)
+- README.md, CLAUDE.md
+
 ## 2026.10.10
 
 ### What Changed

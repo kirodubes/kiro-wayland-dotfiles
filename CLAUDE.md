@@ -42,6 +42,14 @@ consumer too, for dconf only.
   stay noctalia's job). Its sibling **`kiro-ohmyniri` is also a partial consumer** (dconf + mako +
   waybar css; not hyprlock/hypridle).
 
+## Helpers and translations
+- `usr/bin/kiro-screenshot` (Print) and `usr/bin/kiro-premium-hint` (Ctrl+Alt+H on the KiroTux editions) are shared
+  by every Wayland edition; never copy their logic back into an edition config.
+- Their notifications go through gettext (domain `kiro-wayland-dotfiles`, `_t`/`_tf`). After changing that text run
+  `bash po/make-mo.sh`: it extracts both helpers, merges the 13 `po/<lang>.po` and compiles
+  `usr/share/locale/<lang>/LC_MESSAGES/kiro-wayland-dotfiles.mo`, which the PKGBUILD installs to /usr/share/locale.
+- Product names (`$product`) are never translated. Rules and registers: `~/Insync/Kiro/Kiro-HQ/TRANSLATIONS/README.md`.
+
 ## Gotchas
 - The combined `style.css` must keep ALL editions' workspace selectors. When a new waybar edition is
   added, add its selector block here, not a private style.css.
