@@ -3,6 +3,20 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.11.13
+
+### What Changed
+- **The default icon theme of every Wayland edition is now Surfn Kiro** (dconf `icon-theme` and the system GTK3
+  fallback `gtk-icon-theme-name`). Users who never chose an icon theme switch after the update and a new login; a
+  user's own choice still wins. Erik's call on 2026-11-13, after impasto looked right on riker.
+
+### Technical Details
+- The PKGBUILD (KIRO-PKG-BUILD-APPS) now depends on `surfn-kiro-icons-git`: both defaults name it, so it must be
+  installed or the icons go blank. Same value as kiro-dot-files' X11 dconf default (`10-kiro-x11.conf`).
+
+### Files Modified
+- `etc/dconf/db/local.d/00-kiro.conf`, `etc/xdg/gtk-3.0/settings.ini`, `CHANGELOG.md`
+
 ## 2026.11.03
 
 ### What Changed
