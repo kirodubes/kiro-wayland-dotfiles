@@ -3,6 +3,27 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.11.15
+
+### What Changed
+- `hypridle.conf` (classic Kiro Hyprland and wayfire): the screen turns off after 15 minutes idle (was 6), and the
+  idle lock after 5 minutes is gone: Kiro locks only before sleep. The lock listener stays in the file, commented
+  out, at 15 minutes.
+- Classic Hyprland's screen-off never worked: it called `wlr-randr`, which only kiro-wayfire depends on. Screens now
+  go off through Hyprland's own dpms dispatcher, with `wlr-randr` as the fallback outside Hyprland.
+
+### Technical Details
+- `on-timeout` / `on-resume` / `after_sleep_cmd`: `hyprctl dispatch 'hl.dsp.dpms({ action = "off" })' || wlr-randr
+  --output '*' --off` (and `on`). The table form matters: `hl.dsp.dpms("on")` ignores the argument and toggles
+  (proven on riker: "on" after "off" turned the screens off again). Without a Hyprland session hyprctl exits 1, so
+  wayfire falls through to wlr-randr.
+- Tested on riker (Hyprland 0.55): this file with a 30 s timeout turned both monitors off, no hyprlock started.
+- Header now names both users of the file (it said "Kiro wayfire" only).
+- Reaches new installs only (`/etc/skel`); existing installs get it with `skell`.
+
+### Files Modified
+- `etc/skel/.config/hypr/hypridle.conf`
+
 ## 2026.11.13
 
 ### What Changed
