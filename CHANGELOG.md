@@ -10,15 +10,16 @@ Format: one dated entry per day (`YYYY.MM.DD`), newest first.
   idle lock after 5 minutes is gone: Kiro locks only before sleep. The lock listener stays in the file, commented
   out, at 15 minutes.
 - Classic Hyprland's screen-off never worked: it called `wlr-randr`, which only kiro-wayfire depends on. Screens now
-  go off through Hyprland's own dpms dispatcher, with `wlr-randr` as the fallback outside Hyprland.
+  go off through Hyprland's own dpms dispatcher. On wayfire it never worked either (wlr-randr 0.5 rejects
+  `--output '*'`), so wayfire now uses its own `[idle] dpms_timeout` (kiro-wayfire) and the wlr-randr fallback is gone.
 
 ### Technical Details
-- `on-timeout` / `on-resume` / `after_sleep_cmd`: `hyprctl dispatch 'hl.dsp.dpms({ action = "off" })' || wlr-randr
-  --output '*' --off` (and `on`). The table form matters: `hl.dsp.dpms("on")` ignores the argument and toggles
-  (proven on riker: "on" after "off" turned the screens off again). Without a Hyprland session hyprctl exits 1, so
-  wayfire falls through to wlr-randr.
+- `on-timeout` / `on-resume` / `after_sleep_cmd`: `hyprctl dispatch 'hl.dsp.dpms({ action = "off" })'` (and `on`).
+  The table form matters: `hl.dsp.dpms("on")` ignores the argument and toggles (proven on riker: "on" after "off"
+  turned the screens off again). The first build (26.11-03) still had `|| wlr-randr --output '*' --off`: on picard
+  (wayfire) that fired and failed with "unknown output *" (rc 1), screen stayed on; removed.
 - Tested on riker (Hyprland 0.55): this file with a 30 s timeout turned both monitors off, no hyprlock started.
-- Header now names both users of the file (it said "Kiro wayfire" only).
+- Header now names the file's users (it said "Kiro wayfire" only): classic Hyprland, and wayfire for the lock.
 - Reaches new installs only (`/etc/skel`); existing installs get it with `skell`.
 
 ### Files Modified
