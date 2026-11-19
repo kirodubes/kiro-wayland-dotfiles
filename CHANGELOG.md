@@ -3,6 +3,21 @@
 All notable changes to **kiro-wayland-dotfiles** are documented here.
 Format: one dated entry per day (`YYYY.MM.DD`), newest first.
 
+## 2026.11.19
+
+### What Changed
+- **wayfire's bar underlines workspaces that have windows**: a numbered workspace with windows on it is brighter
+  (`@fg`) and has a 2 px line in the pywal accent colour. Only kiro-wayfire's bar: Erik wanted it there alone.
+
+### Technical Details
+- `#workspaces.wf button:not(.empty)` with `box-shadow: inset 0 -2px @accent`: kiro-wayfire names its module
+  `wayfire/workspaces#wf` (waybar adds the `wf` class), and waybar 0.16's wayfire module marks empty workspaces
+  `.empty`. The Hyprland/sway/niri bars use plain `#workspaces` and are untouched.
+
+### Files Modified
+- etc/skel/.config/waybar/style.css
+- CHANGELOG.md
+
 ## 2026.11.15
 
 ### What Changed
